@@ -76,7 +76,7 @@ public class Manipulation {
 			for (Cell cell : result.rawCells()) {
 				System.out.printf("row:%s, family:%s, qualifier:%s, value:%s \n",
 						Bytes.toString(CellUtil.cloneRow(cell)), Bytes.toString(CellUtil.cloneFamily(cell)),
-						Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toString(CellUtil.cloneValue(cell)));
+						Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toDouble(CellUtil.cloneValue(cell)));
 			}
 		}
 		hTable.close();

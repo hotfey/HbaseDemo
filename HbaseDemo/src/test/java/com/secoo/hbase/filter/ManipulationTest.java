@@ -51,7 +51,7 @@ public class ManipulationTest {
 	@Ignore
 	@Test
 	public void testAllScan() {
-		String tableName = "java";
+		String tableName = "t1";
 		Manipulation manipulation = new Manipulation();
 		try {
 			manipulation.allScan(tableName);
