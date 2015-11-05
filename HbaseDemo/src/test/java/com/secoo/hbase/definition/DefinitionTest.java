@@ -13,8 +13,8 @@ public class DefinitionTest {
 	@Ignore
 	@Test
 	public void testCreateTable() {
-		String tableName = "t1";
-		String[] families = { "f1" };
+		String tableName = "";
+		String[] families = { "" };
 		Definition definition = new Definition();
 		try {
 			definition.createTable(tableName, families);
@@ -31,7 +31,7 @@ public class DefinitionTest {
 	@Ignore
 	@Test
 	public void testDeleteTAble() {
-		String tableName = "t1";
+		String tableName = "";
 		Definition definition = new Definition();
 		try {
 			definition.deleteTable(tableName);

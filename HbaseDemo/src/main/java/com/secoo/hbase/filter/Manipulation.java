@@ -29,14 +29,18 @@ public class Manipulation {
 		configuration = HBaseConfiguration.create();
 	}
 
-	public void rowPut(String tableName, String family, String qualifier) throws IOException {
+	public void rowPut(String tableName, String family, String[] qualifiers) throws IOException {
 		HTable hTable = new HTable(configuration, tableName);
 		for (int i = 0; i < 100; i++) {
-			String value = i + "";
-			Put put = new Put(("row" + i).getBytes());
-			put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(Double.parseDouble(value)));
+			Put put = new Put(Bytes.toBytes(10000 + i));
+			for (int j = 0; j < qualifiers.length; j++) {
+				String qualifier = qualifiers[j];
+				String value = i + "";
+				put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+				System.out.printf("row put family:%s, qualifier:%s, value:%s \n", family, qualifier, value);
+			}
 			hTable.put(put);
-			System.out.printf("row put family:%s, qualifier:%s, value:%s \n", family, qualifier, value);
+
 		}
 		hTable.close();
 	}
@@ -154,21 +158,14 @@ public class Manipulation {
 		hTable.close();
 	}
 
-	public void filterListRegexScan(String tableName, String[] families, String[] qualifiers, String[] values)
+	public void filterListRegexScan(String tableName, String family, String qualifier, String value)
 			throws IOException {
 		HTable hTable = new HTable(configuration, tableName);
-		Filter filter = null;
-		List<Filter> liFilters = new ArrayList<Filter>();
-		filter = new SingleColumnValueFilter(Bytes.toBytes(families[0]), Bytes.toBytes(qualifiers[0]), CompareOp.EQUAL,
-				Bytes.toBytes(values[0]));
-		liFilters.add(filter);
-		filter = new SingleColumnValueFilter(Bytes.toBytes(families[1]), Bytes.toBytes(qualifiers[1]), CompareOp.EQUAL,
-				new RegexStringComparator(values[1] + "$"));
-		liFilters.add(filter);
+		Filter filter = new SingleColumnValueFilter(Bytes.toBytes(family), Bytes.toBytes(qualifier), CompareOp.EQUAL,
+				new RegexStringComparator("^" + value));
 
-		FilterList filterList = new FilterList(liFilters);
 		Scan scan = new Scan();
-		scan.setFilter(filterList);
+		scan.setFilter(filter);
 		ResultScanner resultScanner = hTable.getScanner(scan);
 		for (Result result : resultScanner) {
 			for (Cell cell : result.rawCells()) {
