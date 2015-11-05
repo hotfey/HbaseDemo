@@ -11,8 +11,8 @@ public class InitialCoporcessorTest {
 	@Ignore
 	@Test
 	public void testCreateTableCoprocessor() {
-		String tableName = "t1";
-		String family = "f1";
+		String tableName = "";
+		String family = "";
 		InitialCoprocessor initialCoprocessor = new InitialCoprocessor();
 		try {
 			initialCoprocessor.createTableCoprocessor(tableName, family);
@@ -29,7 +29,7 @@ public class InitialCoporcessorTest {
 	@Ignore
 	@Test
 	public void testAddCoprocessor() {
-		String tableName = "t1";
+		String tableName = "";
 		InitialCoprocessor InitialCoprocessor = new InitialCoprocessor();
 		try {
 			InitialCoprocessor.addCoprocessor(tableName);

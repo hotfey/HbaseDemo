@@ -9,6 +9,7 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.coprocessor.AggregationClient;
 import org.apache.hadoop.hbase.client.coprocessor.DoubleColumnInterpreter;
 import org.apache.hadoop.hbase.client.coprocessor.LongColumnInterpreter;
+import org.apache.hadoop.hbase.protobuf.ProtobufUtil;
 
 public class Aggregation {
 	public static Configuration configuration;
@@ -35,7 +36,13 @@ public class Aggregation {
 		HTable hTable = new HTable(configuration, tableName);
 
 		AggregationClient aggregationClient = new AggregationClient(configuration);
-		return aggregationClient.avg(hTable, new DoubleColumnInterpreter(), scan);
+
+		int qualifierCount = 0;
+		for (int i = 0; i < ProtobufUtil.toScan(scan).getColumnCount(); i++) {
+			qualifierCount += ProtobufUtil.toScan(scan).getColumn(i).getQualifierCount();
+		}
+
+		return aggregationClient.avg(hTable, new DoubleColumnInterpreter(), scan) * qualifierCount;
 	}
 
 	public double max(String tableName, Scan scan) throws IOException, Throwable {
