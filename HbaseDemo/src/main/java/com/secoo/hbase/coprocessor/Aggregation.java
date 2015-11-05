@@ -41,6 +41,7 @@ public class Aggregation {
 		for (int i = 0; i < ProtobufUtil.toScan(scan).getColumnCount(); i++) {
 			qualifierCount += ProtobufUtil.toScan(scan).getColumn(i).getQualifierCount();
 		}
+		
 		return aggregationClient.avg(hTable, new DoubleColumnInterpreter(), scan) * qualifierCount;
 	}
 
