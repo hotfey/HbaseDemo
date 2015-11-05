@@ -112,11 +112,11 @@ public class AggregationTest {
 	@Ignore
 	@Test
 	public void testAvg() {
-		String tableName = "web_initial";
-		String family = "cf1";
-		String qualifier = "duration";
-		String filterQualifier = "url";
-		String filterQualifierValue = "http://www.secoo.com/";
+		String tableName = "";
+		String family = "";
+		String qualifier = "";
+		String filterQualifier = "";
+		String filterQualifierValue = "";
 
 		Scan scan = new Scan();
 		scan.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
@@ -130,13 +130,13 @@ public class AggregationTest {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 		Date date = null;
 		try {
-			date = simpleDateFormat.parse("20151104 00:00:00");
+			date = simpleDateFormat.parse("");
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
 		scan.setStartRow(Bytes.toBytes(date.getTime() + ""));
 		try {
-			date = simpleDateFormat.parse("20151105 00:00:00");
+			date = simpleDateFormat.parse("");
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
