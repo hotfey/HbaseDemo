@@ -31,12 +31,18 @@ public class Manipulation {
 
 	public void rowPut(String tableName, String family, String[] qualifiers) throws IOException {
 		HTable hTable = new HTable(configuration, tableName);
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1000; i++) {
 			Put put = new Put(Bytes.toBytes(10000 + i));
 			for (int j = 0; j < qualifiers.length; j++) {
 				String qualifier = qualifiers[j];
-				String value = i + "";
-				put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+				String value;
+				if (qualifier.equals("")) {
+					value = i + "";
+					put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(Double.parseDouble(value)));
+				} else {
+					value = i + "";
+					put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+				}
 				System.out.printf("row put family:%s, qualifier:%s, value:%s \n", family, qualifier, value);
 			}
 			hTable.put(put);
@@ -95,9 +101,15 @@ public class Manipulation {
 		ResultScanner resultScanner = hTable.getScanner(scan);
 		for (Result result : resultScanner) {
 			for (Cell cell : result.rawCells()) {
-				System.out.printf("row:%s, family:%s, qualifier:%s, value:%s \n",
-						Bytes.toString(CellUtil.cloneRow(cell)), Bytes.toString(CellUtil.cloneFamily(cell)),
-						Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toString(CellUtil.cloneValue(cell)));
+				if (Bytes.toString(CellUtil.cloneQualifier(cell)).equals("")) {
+					System.out.printf("rowabc:%s, family:%s, qualifier:%s, value:%s \n",
+							Bytes.toInt(CellUtil.cloneRow(cell)), Bytes.toString(CellUtil.cloneFamily(cell)),
+							Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toDouble(CellUtil.cloneValue(cell)));
+				} else {
+					System.out.printf("rowdef:%s, family:%s, qualifier:%s, value:%s \n",
+							Bytes.toInt(CellUtil.cloneRow(cell)), Bytes.toString(CellUtil.cloneFamily(cell)),
+							Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toString(CellUtil.cloneValue(cell)));
+				}
 			}
 		}
 		hTable.close();
@@ -141,7 +153,7 @@ public class Manipulation {
 				CompareOp.GREATER_OR_EQUAL, Bytes.toBytes(values[1]));
 		liFilters.add(filter);
 		filter = new SingleColumnValueFilter(Bytes.toBytes(families[1]), Bytes.toBytes(qualifiers[1]),
-				CompareOp.LESS_OR_EQUAL, Bytes.toBytes("65"));
+				CompareOp.LESS_OR_EQUAL, Bytes.toBytes(""));
 		liFilters.add(filter);
 
 		FilterList filterList = new FilterList(liFilters);
