@@ -117,26 +117,36 @@ public class AggregationTest {
 		String qualifier = "";
 		String filterQualifier = "";
 		String filterQualifierValue = "";
+		String filterQualifier2 = "";
+		String filterQualifierValue2 = "";
+		String startTime = "";
+		String endTime = "";
 
 		Scan scan = new Scan();
 		scan.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier));
 		scan.addColumn(Bytes.toBytes(family), Bytes.toBytes(filterQualifier));
 
+		FilterList filterList = new FilterList(Operator.MUST_PASS_ALL);
+
 		Filter filter = new SingleColumnValueFilter(Bytes.toBytes(family), Bytes.toBytes(filterQualifier),
 				CompareOp.EQUAL, Bytes.toBytes(filterQualifierValue));
+		filterList.addFilter(filter);
+		filter = new SingleColumnValueFilter(Bytes.toBytes(family), Bytes.toBytes(filterQualifier2),
+				CompareOp.NOT_EQUAL, Bytes.toBytes(filterQualifierValue2));
+		filterList.addFilter(filter);
 
-		scan.setFilter(filter);
+		scan.setFilter(filterList);
 
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 		Date date = null;
 		try {
-			date = simpleDateFormat.parse("");
+			date = simpleDateFormat.parse(startTime);
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
 		scan.setStartRow(Bytes.toBytes(date.getTime() + ""));
 		try {
-			date = simpleDateFormat.parse("");
+			date = simpleDateFormat.parse(endTime);
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
@@ -144,7 +154,12 @@ public class AggregationTest {
 
 		Aggregation aggregation = new Aggregation();
 		try {
-			System.out.printf("avg:%s", aggregation.avg(tableName, scan));
+			long startTimesMillis = System.currentTimeMillis();
+			for (int i = 0; i < 1; i++) {
+				System.out.printf("avg:%s\n", aggregation.avg(tableName, scan));
+			}
+			long endTimeMillis = System.currentTimeMillis();
+			System.out.printf("use time:%s\n", endTimeMillis - startTimesMillis);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Throwable e) {
