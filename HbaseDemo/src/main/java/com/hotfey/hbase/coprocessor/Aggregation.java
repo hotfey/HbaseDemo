@@ -1,4 +1,4 @@
-package com.secoo.hbase.coprocessor;
+package com.hotfey.hbase.coprocessor;
 
 import java.io.IOException;
 

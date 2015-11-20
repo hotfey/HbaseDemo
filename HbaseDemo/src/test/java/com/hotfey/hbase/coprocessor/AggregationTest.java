@@ -1,4 +1,4 @@
-package com.secoo.hbase.coprocessor;
+package com.hotfey.hbase.coprocessor;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -16,6 +16,8 @@ import org.apache.hadoop.hbase.protobuf.ProtobufUtil;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import com.hotfey.hbase.coprocessor.Aggregation;
 
 public class AggregationTest {
 	@Ignore

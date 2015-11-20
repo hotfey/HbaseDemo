@@ -1,11 +1,11 @@
-package com.secoo.hbase.filter;
+package com.hotfey.hbase.filter;
 
 import java.io.IOException;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.secoo.hbase.filter.Manipulation;
+import com.hotfey.hbase.filter.Manipulation;
 
 public class ManipulationTest {
 	@Ignore

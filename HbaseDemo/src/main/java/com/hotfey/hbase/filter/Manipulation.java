@@ -1,4 +1,4 @@
-package com.secoo.hbase.filter;
+package com.hotfey.hbase.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +31,7 @@ public class Manipulation {
 
 	public void rowPut(String tableName, String family, String[] qualifiers) throws IOException {
 		HTable hTable = new HTable(configuration, tableName);
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 10; i++) {
 			Put put = new Put(Bytes.toBytes(10000 + i));
 			for (int j = 0; j < qualifiers.length; j++) {
 				String qualifier = qualifiers[j];
@@ -86,7 +86,7 @@ public class Manipulation {
 			for (Cell cell : result.rawCells()) {
 				System.out.printf("row:%s, family:%s, qualifier:%s, value:%s \n",
 						Bytes.toString(CellUtil.cloneRow(cell)), Bytes.toString(CellUtil.cloneFamily(cell)),
-						Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toDouble(CellUtil.cloneValue(cell)));
+						Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toString(CellUtil.cloneValue(cell)));
 			}
 		}
 		hTable.close();

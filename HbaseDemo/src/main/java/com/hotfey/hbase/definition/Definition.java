@@ -1,4 +1,4 @@
-package com.secoo.hbase.definition;
+package com.hotfey.hbase.definition;
 
 import java.io.IOException;
 

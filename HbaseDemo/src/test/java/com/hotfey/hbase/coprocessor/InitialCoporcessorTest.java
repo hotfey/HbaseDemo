@@ -1,4 +1,4 @@
-package com.secoo.hbase.definition;
+package com.hotfey.hbase.coprocessor;
 
 import java.io.IOException;
 
@@ -7,17 +7,17 @@ import org.apache.hadoop.hbase.ZooKeeperConnectionException;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.secoo.hbase.definition.Definition;
+import com.hotfey.hbase.coprocessor.InitialCoprocessor;
 
-public class DefinitionTest {
+public class InitialCoporcessorTest {
 	@Ignore
 	@Test
-	public void testCreateTable() {
+	public void testCreateTableCoprocessor() {
 		String tableName = "";
-		String[] families = { "" };
-		Definition definition = new Definition();
+		String family = "";
+		InitialCoprocessor initialCoprocessor = new InitialCoprocessor();
 		try {
-			definition.createTable(tableName, families);
+			initialCoprocessor.createTableCoprocessor(tableName, family);
 		} catch (MasterNotRunningException e) {
 			e.printStackTrace();
 		} catch (ZooKeeperConnectionException e) {
@@ -30,11 +30,11 @@ public class DefinitionTest {
 
 	@Ignore
 	@Test
-	public void testDeleteTAble() {
+	public void testAddCoprocessor() {
 		String tableName = "";
-		Definition definition = new Definition();
+		InitialCoprocessor InitialCoprocessor = new InitialCoprocessor();
 		try {
-			definition.deleteTable(tableName);
+			InitialCoprocessor.addCoprocessor(tableName);
 		} catch (MasterNotRunningException e) {
 			e.printStackTrace();
 		} catch (ZooKeeperConnectionException e) {
@@ -42,6 +42,6 @@ public class DefinitionTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.printf("table %s delete success!", tableName);
+		System.out.printf("Add table %s coprocessor success!", tableName);
 	}
 }
