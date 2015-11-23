@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
@@ -11,13 +12,15 @@ import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.FilterList.Operator;
 import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
+import org.apache.hadoop.hbase.filter.RegexStringComparator;
+import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.apache.hadoop.hbase.protobuf.ProtobufUtil;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.hotfey.hbase.coprocessor.Aggregation;
+import com.hotfey.hbase.util.RegexUtil;
 
 public class AggregationTest {
 	@Ignore
@@ -119,8 +122,6 @@ public class AggregationTest {
 		String qualifier = "";
 		String filterQualifier = "";
 		String filterQualifierValue = "";
-		String filterQualifier2 = "";
-		String filterQualifierValue2 = "";
 		String startTime = "";
 		String endTime = "";
 
@@ -130,14 +131,9 @@ public class AggregationTest {
 
 		FilterList filterList = new FilterList(Operator.MUST_PASS_ALL);
 
-		Filter filter = new SingleColumnValueFilter(Bytes.toBytes(family), Bytes.toBytes(filterQualifier),
-				CompareOp.EQUAL, Bytes.toBytes(filterQualifierValue));
-		filterList.addFilter(filter);
-		filter = new SingleColumnValueFilter(Bytes.toBytes(family), Bytes.toBytes(filterQualifier2),
-				CompareOp.NOT_EQUAL, Bytes.toBytes(filterQualifierValue2));
-		filterList.addFilter(filter);
-
-		scan.setFilter(filterList);
+		int prefixLength = 3;
+		long startNumeric = 0;
+		long stopNumeric = 0;
 
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 		Date date = null;
@@ -146,13 +142,27 @@ public class AggregationTest {
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
-		scan.setStartRow(Bytes.toBytes(date.getTime() + ""));
+		startNumeric = date.getTime();
+
 		try {
 			date = simpleDateFormat.parse(endTime);
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}
-		scan.setStopRow(Bytes.toBytes(date.getTime() + ""));
+		stopNumeric = date.getTime();
+
+		Map<String, String> map = RegexUtil.regexNumericRange(prefixLength, startNumeric, stopNumeric);
+
+		Filter filter = new RowFilter(CompareOp.EQUAL, new RegexStringComparator(map.get("startRegex")));
+		filterList.addFilter(filter);
+		filter = new RowFilter(CompareOp.EQUAL, new RegexStringComparator(map.get("stopRegex")));
+		filterList.addFilter(filter);
+
+		filter = new SingleColumnValueFilter(Bytes.toBytes(family), Bytes.toBytes(filterQualifier), CompareOp.EQUAL,
+				Bytes.toBytes(filterQualifierValue));
+		filterList.addFilter(filter);
+
+		scan.setFilter(filterList);
 
 		Aggregation aggregation = new Aggregation();
 		try {

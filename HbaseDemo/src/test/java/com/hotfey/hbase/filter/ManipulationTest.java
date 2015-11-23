@@ -1,11 +1,12 @@
 package com.hotfey.hbase.filter;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.hotfey.hbase.filter.Manipulation;
+import com.hotfey.hbase.util.RegexUtil;
 
 public class ManipulationTest {
 	@Ignore
@@ -62,14 +63,36 @@ public class ManipulationTest {
 
 	@Ignore
 	@Test
-	public void testFilterScan() {
+	public void testRowFilterScan() {
+		String tableName = "";
+
+		int prefixLength = 3;
+		long startNumeric = 1448017934380L;
+		long stopNumeric = 1448017934580L;
+		startNumeric = 100000001L;
+		stopNumeric = 100000111L;
+		Map<String, String> map = RegexUtil.regexNumericRange(prefixLength, startNumeric, stopNumeric);
+
+		Manipulation manipulation = new Manipulation();
+		try {
+			manipulation.rowFilterScan(tableName, map);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println(map.get("startRegex"));
+		System.out.println(map.get("stopRegex"));
+	}
+
+	@Ignore
+	@Test
+	public void testColumnFilterScan() {
 		String tableName = "";
 		String family = "";
 		String qualifier = "";
 		String value = "";
 		Manipulation manipulation = new Manipulation();
 		try {
-			manipulation.filterScan(tableName, family, qualifier, value);
+			manipulation.columnFilterScan(tableName, family, qualifier, value);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -77,14 +100,14 @@ public class ManipulationTest {
 
 	@Ignore
 	@Test
-	public void testFilterListScan() {
+	public void testColumnFilterListScan() {
 		String tableName = "";
 		String[] families = { "", "" };
 		String[] qualifiers = { "", "" };
 		String[] values = { "", "" };
 		Manipulation manipulation = new Manipulation();
 		try {
-			manipulation.filterListScan(tableName, families, qualifiers, values);
+			manipulation.columnFilterListScan(tableName, families, qualifiers, values);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -92,14 +115,14 @@ public class ManipulationTest {
 
 	@Ignore
 	@Test
-	public void testFilterListRegexScan() {
+	public void testColumnFilterListRegexScan() {
 		String tableName = "";
 		String family = "";
 		String qualifier = "";
 		String value = "";
 		Manipulation manipulation = new Manipulation();
 		try {
-			manipulation.filterListRegexScan(tableName, family, qualifier, value);
+			manipulation.columnFilterListRegexScan(tableName, family, qualifier, value);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

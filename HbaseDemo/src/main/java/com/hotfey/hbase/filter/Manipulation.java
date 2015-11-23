@@ -3,6 +3,7 @@ package com.hotfey.hbase.filter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.Cell;
@@ -18,7 +19,9 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
+import org.apache.hadoop.hbase.filter.FilterList.Operator;
 import org.apache.hadoop.hbase.filter.RegexStringComparator;
+import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -92,7 +95,28 @@ public class Manipulation {
 		hTable.close();
 	}
 
-	public void filterScan(String tableName, String family, String qualifier, String value) throws IOException {
+	public void rowFilterScan(String tableName, Map<String, String> map) throws IOException {
+		HTable hTable = new HTable(configuration, tableName);
+		FilterList filterList = new FilterList(Operator.MUST_PASS_ALL);
+		Filter filter = new RowFilter(CompareOp.EQUAL, new RegexStringComparator(map.get("startRegex")));
+		filterList.addFilter(filter);
+		filter = new RowFilter(CompareOp.EQUAL, new RegexStringComparator(map.get("stopRegex")));
+		filterList.addFilter(filter);
+		
+		Scan scan = new Scan();
+		scan.setFilter(filterList);
+		ResultScanner resultScanner = hTable.getScanner(scan);
+		for (Result result : resultScanner) {
+			for (Cell cell : result.rawCells()) {
+				System.out.printf("row:%s, family:%s, qualifier:%s, value:%s \n",
+						Bytes.toString(CellUtil.cloneRow(cell)), Bytes.toString(CellUtil.cloneFamily(cell)),
+						Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toString(CellUtil.cloneValue(cell)));
+			}
+		}
+		hTable.close();
+	}
+
+	public void columnFilterScan(String tableName, String family, String qualifier, String value) throws IOException {
 		HTable hTable = new HTable(configuration, tableName);
 		Filter filter = new SingleColumnValueFilter(Bytes.toBytes(family), Bytes.toBytes(qualifier), CompareOp.EQUAL,
 				Bytes.toBytes(value));
@@ -115,7 +139,7 @@ public class Manipulation {
 		hTable.close();
 	}
 
-	public void filterListScan(String tableName, String[] families, String[] qualifiers, String[] values)
+	public void columnFilterListScan(String tableName, String[] families, String[] qualifiers, String[] values)
 			throws IOException {
 		HTable hTable = new HTable(configuration, tableName);
 		Filter filter = null;
@@ -141,7 +165,7 @@ public class Manipulation {
 		hTable.close();
 	}
 
-	public void filterListCompareScan(String tableName, String[] families, String[] qualifiers, String[] values)
+	public void columnFilterListCompareScan(String tableName, String[] families, String[] qualifiers, String[] values)
 			throws IOException {
 		HTable hTable = new HTable(configuration, tableName);
 		Filter filter = null;
@@ -170,7 +194,7 @@ public class Manipulation {
 		hTable.close();
 	}
 
-	public void filterListRegexScan(String tableName, String family, String qualifier, String value)
+	public void columnFilterListRegexScan(String tableName, String family, String qualifier, String value)
 			throws IOException {
 		HTable hTable = new HTable(configuration, tableName);
 		Filter filter = new SingleColumnValueFilter(Bytes.toBytes(family), Bytes.toBytes(qualifier), CompareOp.EQUAL,
