@@ -7,15 +7,17 @@ import java.util.Date;
 import java.util.Map;
 
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
+import org.apache.hadoop.hbase.filter.FamilyFilter;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.FilterList.Operator;
-import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
+import org.apache.hadoop.hbase.filter.QualifierFilter;
 import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
-import org.apache.hadoop.hbase.protobuf.ProtobufUtil;
+import org.apache.hadoop.hbase.filter.ValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -28,10 +30,30 @@ public class AggregationTest {
 	public void testRowCount() {
 		String tableName = "";
 		String family = "";
+		String qualifier = "";
+		String qualifierValue = "";
 
 		Scan scan = new Scan();
-		scan.addFamily(Bytes.toBytes(family));
-		scan.setFilter(new FirstKeyOnlyFilter());
+		FilterList filterList = new FilterList(Operator.MUST_PASS_ALL);
+		/**
+		 * BUG ==> SingleColumnValueFilter
+		 * 
+		 * <pre>
+		 * Filter filter = new SingleColumnValueFilter(Bytes.toBytes(family), Bytes.toBytes(qualifier), CompareOp.EQUAL,
+		 * 		new BinaryComparator(Bytes.toBytes(qualifierValue)));
+		 * filterList.addFilter(filter);
+		 * scan.setFilter(filterList);
+		 * </pre>
+		 */
+
+		Filter filter = new FamilyFilter(CompareOp.EQUAL, new BinaryComparator(Bytes.toBytes(family)));
+		filterList.addFilter(filter);
+		filter = new QualifierFilter(CompareOp.EQUAL, new BinaryComparator(Bytes.toBytes(qualifier)));
+		filterList.addFilter(filter);
+		filter = new ValueFilter(CompareOp.EQUAL, new BinaryComparator(Bytes.toBytes(qualifierValue)));
+		filterList.addFilter(filter);
+
+		scan.setFilter(filterList);
 
 		Aggregation aggregation = new Aggregation();
 		try {
@@ -63,7 +85,7 @@ public class AggregationTest {
 
 		Aggregation aggregation = new Aggregation();
 		try {
-			System.out.printf("sum:%s", aggregation.sum(tableName, scan) * ProtobufUtil.toScan(scan).getColumnCount());
+			System.out.printf("sum:%s", aggregation.sum(tableName, scan));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Throwable e) {

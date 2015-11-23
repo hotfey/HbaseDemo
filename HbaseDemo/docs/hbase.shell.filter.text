@@ -1,0 +1,76 @@
+=====================BinaryComparator==========================
+import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hadoop.hbase.filter.ValueFilter;
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.BinaryComparator;
+scan '', { COLUMNS => '',
+FILTER => ValueFilter.new(
+CompareFilter::CompareOp.valueOf('EQUAL'),
+BinaryComparator.new(Bytes.toBytes(''))
+),
+LIMIT=>3}
+
+=====================SubstringComparator=======================
+import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hadoop.hbase.filter.ValueFilter;
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.SubstringComparator;
+scan '', { COLUMNS => '',
+FILTER => ValueFilter.new(
+CompareFilter::CompareOp.valueOf('EQUAL'),
+SubstringComparator.new(Bytes.toBytes(''))
+),
+LIMIT=>3}
+
+=====================RegexStringComparator=======================
+import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hadoop.hbase.filter.ValueFilter;
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.RegexStringComparator;
+scan '', { COLUMNS => '',
+FILTER => ValueFilter.new(
+CompareFilter::CompareOp.valueOf('EQUAL'),
+RegexStringComparator.new(Bytes.toBytes(''))
+),
+LIMIT=>3}
+
+=====================SubstringComparator=====================
+import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter
+scan '', { COLUMNS => '',
+FILTER => SingleColumnValueFilter.new(
+Bytes.toBytes(''),
+Bytes.toBytes(''),
+CompareFilter::CompareOp.valueOf('EQUAL'),
+Bytes.toBytes('')
+),
+LIMIT=>3}
+
+=====================SubstringComparator=====================
+import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.SubstringComparator
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter
+scan '', { COLUMNS => '',
+FILTER => SingleColumnValueFilter.new(
+Bytes.toBytes(''),
+Bytes.toBytes(''),
+CompareFilter::CompareOp.valueOf('EQUAL'),
+SubstringComparator.new('')
+),
+LIMIT=>3}
+
+=====================RegexStringComparator====================
+import org.apache.hadoop.hbase.util.Bytes
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.RegexStringComparator;
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter
+scan '', { COLUMNS => '',
+FILTER => SingleColumnValueFilter.new(
+Bytes.toBytes(''),
+Bytes.toBytes(''),
+CompareFilter::CompareOp.valueOf('EQUAL'),
+RegexStringComparator.new('')
+),
+LIMIT=>3}
