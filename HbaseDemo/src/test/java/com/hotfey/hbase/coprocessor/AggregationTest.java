@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
 import org.apache.hadoop.hbase.filter.Filter;
@@ -15,12 +17,20 @@ import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.filter.SingleColumnValueFilter;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.hotfey.hbase.util.RegexUtil;
 
 public class AggregationTest {
+	private Configuration configuration;
+
+	@Before
+	public void initial() {
+		configuration = HBaseConfiguration.create();
+	}
+
 	@Ignore
 	@Test
 	public void testRowCount() {
@@ -30,17 +40,17 @@ public class AggregationTest {
 		String qualifierValue = "";
 
 		Scan scan = new Scan();
-		
+
 		FilterList filterList = new FilterList(Operator.MUST_PASS_ALL);
 		Filter filter = new SingleColumnValueFilter(Bytes.toBytes(family), Bytes.toBytes(qualifier), CompareOp.EQUAL,
 				Bytes.toBytes(qualifierValue));
 		filterList.addFilter(filter);
-		
+
 		scan.setFilter(filterList);
 
 		Aggregation aggregation = new Aggregation();
 		try {
-			System.out.printf("rowCount:%s", aggregation.rowCount(tableName, scan));
+			System.out.printf("rowCount:%s", aggregation.rowCount(configuration, tableName, scan));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Throwable e) {
@@ -68,7 +78,7 @@ public class AggregationTest {
 
 		Aggregation aggregation = new Aggregation();
 		try {
-			System.out.printf("sum:%s", aggregation.sum(tableName, scan));
+			System.out.printf("sum:%s", aggregation.sum(configuration, tableName, scan));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Throwable e) {
@@ -107,7 +117,7 @@ public class AggregationTest {
 
 		Aggregation aggregation = new Aggregation();
 		try {
-			System.out.printf("avg:%s \n", aggregation.avg(tableName, scan));
+			System.out.printf("avg:%s \n", aggregation.avg(configuration, tableName, scan));
 			System.out.println("sum:" + sum);
 			System.out.println("count:" + count);
 			System.out.println("sum/count:" + sum * 1.0 / count * 1.0);
@@ -173,7 +183,7 @@ public class AggregationTest {
 		try {
 			long startTimesMillis = System.currentTimeMillis();
 			for (int i = 0; i < 1; i++) {
-				System.out.printf("avg:%s\n", aggregation.avg(tableName, scan));
+				System.out.printf("avg:%s\n", aggregation.avg(configuration, tableName, scan));
 			}
 			long endTimeMillis = System.currentTimeMillis();
 			System.out.printf("use time:%s\n", endTimeMillis - startTimesMillis);
@@ -196,7 +206,7 @@ public class AggregationTest {
 
 		Aggregation aggregation = new Aggregation();
 		try {
-			System.out.printf("max:%s", aggregation.max(tableName, scan));
+			System.out.printf("max:%s", aggregation.max(configuration, tableName, scan));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Throwable e) {
@@ -216,7 +226,7 @@ public class AggregationTest {
 
 		Aggregation aggregation = new Aggregation();
 		try {
-			System.out.printf("min:%s", aggregation.min(tableName, scan));
+			System.out.printf("min:%s", aggregation.min(configuration, tableName, scan));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Throwable e) {
